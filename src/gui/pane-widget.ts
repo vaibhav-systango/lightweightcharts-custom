@@ -29,7 +29,7 @@ import { IPaneView } from '../views/pane/ipane-view';
 
 import { createBoundCanvas } from './canvas-utils';
 import { ChartWidget } from './chart-widget';
-import { MouseEventHandler, MouseEventHandlerEventBase, MouseEventHandlerMouseEvent, MouseEventHandlers, MouseEventHandlerTouchEvent, Position, TouchMouseEvent } from './mouse-event-handler';
+import { MouseEventHandler, MouseEventHandlerEventBase, MouseEventHandlerMouseEvent, MouseEventHandlers, MouseEventHandlerTouchEvent, Position, TouchMouseEvent, TouchMouseEventLocal } from './mouse-event-handler';
 import { PriceAxisWidget, PriceAxisWidgetSide } from './price-axis-widget';
 
 const enum KineticScrollConstants {
@@ -266,7 +266,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._setCrosshairPosition(event.localX, event.localY, event);
 	}
 
-	public mouseMoveEvent(event: MouseEventHandlerMouseEvent): void {
+	public mouseMoveEvent(event: MouseEventHandlerMouseEvent & TouchMouseEventLocal): void {
 		if (!this._state) {
 			return;
 		}

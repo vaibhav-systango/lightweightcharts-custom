@@ -2,6 +2,7 @@ import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartOptions } from '../model/chart-model';
 import { Point } from '../model/point';
+import { PriceMark } from '../model/price-scale';
 import {
 	AreaSeriesPartialOptions,
 	BarSeriesPartialOptions,
@@ -194,6 +195,27 @@ export interface IChartApi {
 	 * ```
 	 */
 	unsubscribeClick(handler: MouseEventHandler): void;
+
+	/*
+	  move crosshair explicitly
+  	*/
+	moveCrosshair(point: Point | null): void;
+
+	/*
+	  remove crosshair explicitly
+  	*/
+
+	removeCrosshair(): void;
+
+	/*
+	  get all right price scale marks;
+  	*/
+
+	getRightPriceScaleMarks(): PriceMark[] | undefined;
+
+	/* Get price axis width */
+
+	getRightPriceAxisWidth(): number;
 
 	/**
 	 * Subscribe to the crosshair move event.

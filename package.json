@@ -1,7 +1,7 @@
 {
-  "private": true,
-  "version": "4.0.0",
-  "name": "lightweight-charts",
+  "private": false,
+  "version": "4.0.19",
+  "name": "lightweight-charts-custom",
   "author": "TradingView, Inc.",
   "license": "Apache-2.0",
   "description": "Financial lightweight charts built with HTML5 canvas",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/tradingview/lightweight-charts.git"
   },
-  "module": "dist/lightweight-charts.production.mjs",
+  "module": "dist/lightweight-charts.development.mjs",
   "main": "index.cjs",
   "typings": "dist/typings.d.ts",
   "exports": {
@@ -23,14 +23,9 @@
         "import": "./dist/lightweight-charts.development.mjs",
         "require": "./dist/lightweight-charts.development.cjs"
       },
-      "production": {
-        "types": "./dist/typings.d.ts",
-        "import": "./dist/lightweight-charts.production.mjs",
-        "require": "./dist/lightweight-charts.production.cjs"
-      },
       "default": {
         "types": "./dist/typings.d.ts",
-        "import": "./dist/lightweight-charts.production.mjs",
+        "import": "./dist/lightweight-charts.development.mjs",
         "require": "./index.cjs"
       }
     }
@@ -108,8 +103,6 @@
     "yargs": "~17.6.2"
   },
   "scripts": {
-    "postinstall": "npm run install-hooks",
-    "install-hooks": "node scripts/githooks/install.js",
     "clean": "rimraf lib/ dist/",
     "bundle-dts": "tsc --noEmit --allowJs dts-config.js && dts-bundle-generator --config dts-config.js",
     "tsc": "ttsc -p tsconfig.prod.json",

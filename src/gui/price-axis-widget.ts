@@ -310,7 +310,6 @@ export class PriceAxisWidget implements IDestroyable {
 		if (this._priceScale === null || this._priceScale.isEmpty() || !this._options.handleScale.axisPressedMouseMove.price) {
 			return;
 		}
-
 		const model = this._pane.chart().model();
 		const pane = this._pane.state();
 		this._mousedown = true;

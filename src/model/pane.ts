@@ -225,7 +225,7 @@ export class Pane implements IDestroyable {
 	}
 
 	public scalePriceTo(priceScale: PriceScale, x: number): void {
-		priceScale.scaleTo(x);
+		priceScale.scaleTo(x, this);
 
 		// TODO: be more smart and update only affected views
 		this.updateAllSources();

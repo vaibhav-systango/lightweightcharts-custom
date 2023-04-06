@@ -5,6 +5,8 @@ import { Delegate } from '../helpers/delegate';
 import { clone, DeepPartial, isBoolean, merge } from '../helpers/strict-type-checks';
 
 import { ChartOptions, ChartOptionsInternal } from '../model/chart-model';
+import { Point } from '../model/point';
+import { PriceMark } from '../model/price-scale';
 import { Series } from '../model/series';
 import { SeriesPlotRow } from '../model/series-data';
 import {
@@ -217,6 +219,34 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public unsubscribeClick(handler: MouseEventHandler): void {
 		this._clickedDelegate.unsubscribe(handler);
+	}
+
+	public moveCrosshair(point: Point | null): void {
+		if (!point) {return;}
+		const paneWidgets = this._chartWidget.paneWidgets();
+		const event: any = {
+			localX: point.x as number,
+			localY: point.y as number,
+		};
+		paneWidgets[0].mouseMoveEvent(event);
+	}
+	public removeCrosshair(): void {
+		const paneWidgets = this._chartWidget.paneWidgets();
+		const event: any = {
+			localX: undefined,
+			localY: undefined,
+		};
+		paneWidgets[0].mouseMoveEvent(event);
+	}
+
+	public getRightPriceScaleMarks(): PriceMark[] | undefined {
+		const paneWidgets = this._chartWidget.paneWidgets();
+		return paneWidgets && paneWidgets[0]?.rightPriceAxisWidget()?.priceScale()?.marks();
+	}
+
+	public getRightPriceAxisWidth(): number {
+		const paneWidgets = this._chartWidget.paneWidgets();
+		return paneWidgets && paneWidgets[0]?.rightPriceAxisWidget()?.getWidth() || 0;
 	}
 
 	public subscribeCrosshairMove(handler: MouseEventHandler): void {

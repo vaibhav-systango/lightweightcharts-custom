@@ -639,7 +639,7 @@ export class PriceScale {
 		this._priceRangeSnapshot = ensureNotNull(this.priceRange()).clone();
 	}
 
-	public scaleTo(x: number): void {
+	public scaleTo(x: number, _that: any): void {
 		if (this.isPercentage() || this.isIndexedTo100()) {
 			return;
 		}
@@ -660,11 +660,50 @@ export class PriceScale {
 		}
 
 		let scaleCoeff = (this._scaleStartPoint + (this._height - 1) * 0.2) / (x + (this._height - 1) * 0.2);
-		const newPriceRange = ensureNotNull(this._priceRangeSnapshot).clone();
 
+		const newPriceRange = ensureNotNull(this._priceRangeSnapshot).clone();
 		scaleCoeff = Math.max(scaleCoeff, 0.1);
 		newPriceRange.scaleAroundCenter(scaleCoeff);
-		this.setPriceRange(newPriceRange);
+
+		if (_that) {
+			let minValue = (newPriceRange as any)._minValue || (newPriceRange as any)._private__minValue;
+			let maxValue = (newPriceRange as any)._maxValue || (newPriceRange as any)._private__maxValue;
+			const visibleTimestamp = _that._private__timeScale._internal_visibleTimeRange().to._internal_timestamp;
+			const obj = _that._private__dataSources[0]._private__data._private__items.find((item: any) => (item.originalTime || item._internal_time._internal_timestamp) === visibleTimestamp);
+			// const obj = _that._private__timeScale._private__points.find((item: any) => (item.originalTime || item._internal_time._internal_timestamp)=== visibleTimestamp)
+			const lastPrice = obj._internal_value[3];
+			const currentMaxValue = maxValue;
+			const currentMinValue = minValue;
+			const midValue = Math.round((currentMaxValue + currentMinValue) / 2);
+			const newMaxValue =
+			lastPrice > midValue
+				? lastPrice - midValue + currentMaxValue
+				: currentMaxValue;
+			const newMinValue =
+			lastPrice <= midValue
+				? midValue - lastPrice + currentMinValue
+				: currentMinValue;
+			const val = newMaxValue - lastPrice + (lastPrice - newMinValue);
+			const difference = Math.round(val / 2);
+			let updatedMaxValue = lastPrice + difference;
+			let updatedMinValue = lastPrice - difference;
+			if (maxValue > updatedMaxValue) {
+				const diff = maxValue - updatedMaxValue;
+				updatedMinValue -= diff;
+				updatedMaxValue = maxValue;
+			}
+			if (minValue < updatedMinValue) {
+				const diff = updatedMinValue - minValue;
+				updatedMaxValue += diff;
+				updatedMinValue = minValue;
+			}
+			maxValue = updatedMaxValue + 1;
+			minValue = updatedMinValue - 1;
+			const updatedPriceRange = new PriceRangeImpl(minValue, maxValue);
+			this.setPriceRange(updatedPriceRange, true);
+		} else {
+			this.setPriceRange(newPriceRange);
+		}
 	}
 
 	public endScale(): void {
