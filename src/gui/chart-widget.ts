@@ -1,3 +1,10 @@
+/* eslint-disable @typescript-eslint/tslint/config */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable complexity */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Size, size } from 'fancy-canvas';
 
 import { ensureDefined, ensureNotNull } from '../helpers/assertions';
@@ -514,18 +521,15 @@ export class ChartWidget implements IDestroyable {
 		if (event.cancelable) {
 			event.preventDefault();
 		}
-		if((event.target as any).width > 100){
-
+		const check = (event?.currentTarget as any)?.children[0] && (event?.currentTarget as any)?.children[0]?.children[0]?.lastChild.contains(event?.target);
+		if (!check) {
 			if ((event.deltaX === 0 || !this._options.handleScroll.mouseWheel) &&
 				(event.deltaY === 0 || !this._options.handleScale.mouseWheel)) {
 				return;
 			}
 
-
 			const deltaX = scrollSpeedAdjustment * event.deltaX / 100;
 			const deltaY = -(scrollSpeedAdjustment * event.deltaY / 100);
-
-		
 
 			if (deltaY !== 0 && this._options.handleScale.mouseWheel) {
 				const zoomScale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
@@ -533,40 +537,35 @@ export class ChartWidget implements IDestroyable {
 				this.model().zoomTime(scrollPosition as Coordinate, zoomScale);
 			}
 
-
 			if (deltaX !== 0 && this._options.handleScroll.mouseWheel) {
 				this.model().scrollChart(deltaX * -80 as Coordinate); // 80 is a made up coefficient, and minus is for the "natural" scroll
 			}
-
-		}else {
-			//const deltaY = scrollSpeedAdjustment * event.deltaY / 100;
-			const paneState = this._paneWidgets[0].state()
-			const priceAxisWidget = (this.paneWidgets()[0] as  any)._private__rightPriceAxisWidget;
+		} else {
+				if (event.deltaY === 0 || !this._options.handleScale.mouseWheel) {
+				return;
+			}
+			// const deltaY = scrollSpeedAdjustment * event.deltaY / 100;
+			const paneState = this._paneWidgets[0].state();
+			const priceAxisWidget = (this.paneWidgets()[0] as any)._private__rightPriceAxisWidget;
 			const _priceScale: any = priceAxisWidget?._internal_priceScale();
 			const delta = Math.sign(event.deltaY); // -1 for up, 1 for down
 			const scrollAmount = Math.abs(event.deltaY) * 1.5;
 			// adjust the value based on the scroll direction and amount
-				if (delta < 0) {
-					if(this._mouseWheel < 3000){
-						this._mouseWheel += scrollAmount;
-					}
-				} else {
-					if(this._mouseWheel > -10000){
-						this._mouseWheel -= scrollAmount;
-					}
+			if (delta < 0) {
+				if (this._mouseWheel < 3000) {
+					this._mouseWheel += scrollAmount;
 				}
-				if(_priceScale._private__scaleStartPoint === null){
-					this.model().startScalePrice(paneState, _priceScale,this._mouseWheel);
-				}else{
-					this.model().scalePriceTo(paneState, _priceScale,this._mouseWheel);
+			} else {
+				if (this._mouseWheel > -10000) {
+					this._mouseWheel -= scrollAmount;
 				}
-			
-				
-		
+			}
+			if (_priceScale._private__scaleStartPoint === null) {
+				this.model().startScalePrice(paneState, _priceScale, this._mouseWheel);
+			} else {
+				this.model().scalePriceTo(paneState, _priceScale, this._mouseWheel);
+			}
 		}
-	
-
-
 	}
 
 	private _drawImpl(invalidateMask: InvalidateMask, time: number): void {
