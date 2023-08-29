@@ -1,6 +1,6 @@
 {
   "private": false,
-  "version": "4.0.20",
+  "version": "4.0.21",
   "name": "lightweight-charts-custom",
   "author": "TradingView, Inc.",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tradingview/lightweight-charts.git"
+    "url": "https://github.com/vaibhav-systango/lightweightcharts-custom.git"
   },
   "module": "dist/lightweight-charts.development.mjs",
   "main": "index.cjs",
